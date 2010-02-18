@@ -1,4 +1,4 @@
-define :add_keys do
+define :add_keys, :conf => {} do
   config = params[:conf]
   name = params[:name]
   keys = Mash.new

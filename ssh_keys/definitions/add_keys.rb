@@ -1,4 +1,4 @@
-define :add_keys do
+define :add_keys, :conf => {} do
   
   config = params[:conf]
   name = params[:name]
@@ -10,7 +10,7 @@ define :add_keys do
     action :create
     cookbook "ssh_keys"
     owner name
-    group config[:group].to_s
+    group config[:group] ? config[:group].to_s : name
     variables(:keys => keys)
     mode 0600
   end

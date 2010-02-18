@@ -1,5 +1,7 @@
 #!/bin/sh
 cd <%= @app_path %>
+env -i [ -d log ] || mkdir log
+env -i [ -d tmp ] || mkdir tmp
 env -i git reset --hard 
 env -i git pull origin <%= @git_branch %>
 env -i [ -f .gitmodules ] && git submodule update

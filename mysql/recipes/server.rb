@@ -21,7 +21,6 @@ include_recipe "mysql::client"
 
 case node[:platform]
 when "debian","ubuntu"
-
   directory "/var/cache/local/preseeding" do
     owner "root"
     group "root"
@@ -47,11 +46,14 @@ package "mysql-server" do
   action :install
 end
 
-service "mysql" do
-  service_name value_for_platform([ "centos", "redhat", "suse" ] => {"default" => "mysqld"}, "default" => "mysql")
+case node[:platform]
+when "centos", "redhat", "suse"
+  service "mysql" do
+    service_name "mysqld"
 
-  supports :status => true, :restart => true, :reload => true
-  action :enable
+    supports :status => true, :restart => true, :reload => true
+    action :enable
+  end
 end
 
 template value_for_platform([ "centos", "redhat", "suse" ] => {"default" => "/etc/my.cnf"}, "default" => "/etc/mysql/my.cnf") do
@@ -59,7 +61,10 @@ template value_for_platform([ "centos", "redhat", "suse" ] => {"default" => "/et
   owner "root"
   group "root"
   mode "0644"
-  notifies :restart, resources(:service => "mysql"), :immediately
+  case node[:platform]
+  when "centos", "redhat", "suse"
+    notifies :restart, resources(:service => "mysql"), :immediately
+  end
 end
 
 begin
@@ -76,6 +81,7 @@ rescue
 end
 
 execute "mysql-install-privileges" do
+  #command "/usr/bin/mysql -u root -p#{node[:mysql][:server_root_password]} < /etc/mysql/grants.sql"
   command "/usr/bin/mysql -u root -p#{node[:mysql][:server_root_password]} < /etc/mysql/grants.sql"
   action :nothing
   subscribes :run, resources(:template => "/etc/mysql/grants.sql")
