@@ -31,4 +31,21 @@ node[:apps].each do |app|
     code "cd #{home_path} && git clone #{repos_path} #{app[:name]}"
     not_if { File.exists?(app_path) }
   end
+  
+  template "#{node[:nginx][:conf_dir]}/sites-available/#{app[:name]}" do
+    source "rails_app.conf.erb"
+    owner "root"
+    group "root"
+    mode 0644
+    variables(
+      :root_dir => app_path,
+      :server_name => app[:server]
+    )
+    if File.exists?("#{node[:nginx][:conf_dir]}/sites-enabled/#{app[:name]}")
+      notifies :reload, resources(:service => "nginx"), :delayed
+    end
+    not_if { File.exists?("#{node[:nginx][:conf_dir]}/sites-enabled/#{app[:name]}") }
+  end
+
+  nginx_site app[:name]
 end
