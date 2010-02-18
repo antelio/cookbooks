@@ -33,5 +33,4 @@ remote_file "/usr/sbin/rebuild-iptables" do
   mode 0755
 end
 
-iptables_rule "all_established"
-iptables_rule "all_icmp"
+iptables_rule "restrictive"
