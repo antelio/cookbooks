@@ -1,5 +1,4 @@
 # Very restricted, only accepts 22, 80, 443 and loopback
--A FWR -p icmp -j ACCEPT
 -A INPUT -i lo -j ACCEPT 
 -A OUTPUT -o lo -j ACCEPT
 -A OUTPUT -p udp -o eth0 --dport 53 --sport 1024:65535 -j ACCEPT
