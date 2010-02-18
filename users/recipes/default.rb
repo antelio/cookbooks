@@ -11,5 +11,7 @@ if node[:users]
       supports :manage_home => true
       action [:create, :manage]
     end  
+    
+    add_keys username
   end
 end

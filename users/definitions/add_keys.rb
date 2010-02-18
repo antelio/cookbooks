@@ -18,11 +18,19 @@ define :add_keys do
     end
   end
   
+  directory "/home/#{name}/.ssh" do
+    action :create
+    owner name
+    group config[:groups] ? config[:groups].first.to_s : name
+    mode 0755
+    not_if { File.exists? "/home/#{name}/.ssh" }
+  end
+  
   template "/home/#{name}/.ssh/authorized_keys" do
     source "authorized_keys.erb"
     action :create
     owner name
-    group config[:groups].first.to_s
+    group config[:groups] ? config[:groups].first.to_s : name
     variables(:keys => keys)
     mode 0600
     not_if { defined?(node[:users][name][:preserve_keys]) ? node[:users][name][:preserve_keys] : false }
